@@ -28,3 +28,5 @@ COPY php.ini.$ENVIRONMENT $PHP_INI_DIR/php.ini
 
 # Copy application files
 COPY . /var/www
+
+RUN chown -R www-data:www-data /var/www
