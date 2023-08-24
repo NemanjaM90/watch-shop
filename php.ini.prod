@@ -1,0 +1,5 @@
+display_errors = Off
+log_errors = On
+error_reporting = 0
+upload_max_filesize = 5M
+post_max_size = 5M

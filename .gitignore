@@ -1,0 +1,18 @@
+# Ignore composer.lock file (only commit composer.json)
+composer.lock
+
+# Ignore vendor directory (composer dependencies)
+/vendor/
+
+# Ignore the .env file (contains sensitive information)
+.env
+
+# Ignore any Docker-related files or directories
+/docker-compose.yml
+/docker/mysql
+
+# Ignore any development server files (e.g., PHP's built-in server)
+/public/index.php
+
+# Ignore images & other stored data
+/public/storage
