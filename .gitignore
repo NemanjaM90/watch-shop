@@ -8,11 +8,7 @@ composer.lock
 .env
 
 # Ignore any Docker-related files or directories
-/docker-compose.yml
 /docker/mysql
-
-# Ignore any development server files (e.g., PHP's built-in server)
-/public/index.php
 
 # Ignore images & other stored data
 /public/storage

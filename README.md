@@ -1,35 +1,135 @@
 # PHP-docker
 
-## Login to database
-mysql -u <username> -p
 
-## Create tables
+## Set up
 
-CREATE TABLE users (
-  user_id INT AUTO_INCREMENT PRIMARY KEY,
-  username VARCHAR(50) NOT NULL UNIQUE,
-  email VARCHAR(100) NOT NULL UNIQUE,
-  password VARCHAR(255) NOT NULL
-);
-CREATE TABLE watches (
-  watch_id INT AUTO_INCREMENT PRIMARY KEY,
-  brand VARCHAR(100) NOT NULL,
-  model VARCHAR(100) NOT NULL,
-  price DECIMAL(10, 2) NOT NULL,
-  description TEXT NOT NULL,
-  image_path VARCHAR(255)
-);
-CREATE TABLE comments (
-  comment_id INT AUTO_INCREMENT PRIMARY KEY,
-  watch_id INT NOT NULL,
-  user_id INT NOT NULL,
-  comment TEXT NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (watch_id) REFERENCES watches(watch_id) ON DELETE CASCADE,
-  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
-);
+First copy the `.env.example` file as `.env`. Inside this file enter the credentials that you want.
+### Naming the containers.
+* We have 3 containers that you can see in `docker-compose.yml` file: `app`, `db` & `nginx`.
+All of these have a key called `container_name`. You can change it's value to anything that suits your app.
 
-## Composer
+* If you want to choose a port on which to run the container you can change `8005` to some other number
+inside the `docker-compose.yml` file, in the following part.
 
-run composer install inside the docker container
-And than `composer dump-autoload` for the autoloader to take effect
+nginx:
+image: nginx:alpine
+container_name: reponame-nginx
+restart: unless-stopped
+ports:
+  - 8005:80
+volumes:
+  - ./:/var/www
+  - ./docker/nginx:/etc/nginx/conf.d/
+networks:
+  reponame:
+    ipv4_address: 192.168.0.4
+
+* Now you can run `docker compose up --build`. This will build all the containers.
+
+* After the containers are built, you can only run `docker compose up` & `docker compose down`.
+You can also run `docker compose u -d` if you don't want to see output in the terminal.
+
+## Running commands
+### How to run a command inside the docker container
+* List all the running containers: `docker ps`
+* Run a command inside a container while you are outside.
+
+docker exec -it <container-name> <command>
+
+
+* You could also enter the container shell & run commands from inside it as well.
+
+docker exec -it <container-name> /bin/bash
+
+
+### Composer
+* `composer` has to be run inside the app container, that's where it is installed.
+To run in inside the app container use this command 
+
+composer dump-autoload
+docker exec -it <container-name> composer <command>
+
+
+### Database
+If you want to access the database run the following command:
+
+docker exec -it <container-name> mysql -u <db-username> -p
+
+This will prompt you for a database password that's in the .env file.
+
+### Accessing the website
+Inside `docker-compose.yml` file the following code is telling us on which port you can open the website.
+
+ports:
+  - 8005:80
+
+
+This means that after docker containers are up, you can visit `localhost:8005` & should be able to see your website.
+
+Note: `localhost:8005` will serve `public/index.php`# PHP-docker
+
+## Set up
+
+First copy the `.env.example` file as `.env`. Inside this file enter the credentials that you want.
+### Naming the containers.
+* We have 3 containers that you can see in `docker-compose.yml` file: `app`, `db` & `nginx`.
+All of these have a key called `container_name`. You can change it's value to anything that suits your app.
+
+* If you want to choose a port on which to run the container you can change `8005` to some other number
+inside the `docker-compose.yml` file, in the following part.
+
+nginx:
+image: nginx:alpine
+container_name: reponame-nginx
+restart: unless-stopped
+ports:
+  - 8005:80
+volumes:
+  - ./:/var/www
+  - ./docker/nginx:/etc/nginx/conf.d/
+networks:
+  reponame:
+    ipv4_address: 192.168.0.4
+
+* Now you can run `docker compose up --build`. This will build all the containers.
+
+* After the containers are built, you can only run `docker compose up` & `docker compose down`.
+You can also run `docker compose u -d` if you don't want to see output in the terminal.
+
+## Running commands
+### How to run a command inside the docker container
+* List all the running containers: `docker ps`
+* Run a command inside a container while you are outside.
+
+docker exec -it <container-name> <command>
+
+
+* You could also enter the container shell & run commands from inside it as well.
+
+docker compose -exec -it <container-name> /bin/bash
+
+
+### Composer
+* `composer` has to be run inside the app container, that's where it is installed.
+To run in inside the app container use this command 
+
+docker compose exec -it <container-name> composer <command>
+
+
+### Database
+If you want to access the database run the following command:
+
+docker compose exec -it <container-name> mysql -u <db-username> -p
+
+This will prompt you for a database password that's in the .env file.
+
+### Accessing the website
+Inside `docker-compose.yml` file the following code is telling us on which port you can open the website.
+
+ports:
+  - 8005:80
+
+
+This means that after docker containers are up, you can visit `localhost:8005` & should be able to see your website.
+
+Note: `localhost:8005` will serve `public/index.php`
